@@ -10,13 +10,13 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = "/people/*")
+@WebServlet(urlPatterns = "/persons/*")
 public class PersonServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String requestUrl = request.getRequestURI();
-        String name = requestUrl.substring("/people/".length());
+        String name = requestUrl.substring("/persons/".length());
 
         Person person = DataStore.getInstance().getPerson(name);
         if (person != null) {
