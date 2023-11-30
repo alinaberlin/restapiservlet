@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 
 @WebServlet(urlPatterns = "/people/*")
@@ -31,6 +32,33 @@ public class PersonServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
+        addFromQueryParams(request);
+    }
+
+    private void addFromBody(HttpServletRequest request){
+        try {
+            StringBuilder buffer = new StringBuilder();
+            BufferedReader reader = request.getReader();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line);
+                buffer.append(System.lineSeparator());
+            }
+            String data = buffer.toString();
+
+            JSONObject object = new JSONObject(data);
+
+            String name = object.getString("name");
+            String about = object.getString("about");
+            int birthYear = object.getInt("birthYear");
+            DataStore.getInstance().putPerson(new Person(name, about, birthYear));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addFromQueryParams(HttpServletRequest request){
         String name = request.getParameter("name");
         String about = request.getParameter("about");
         int birthYear = Integer.parseInt(request.getParameter("birthYear"));
